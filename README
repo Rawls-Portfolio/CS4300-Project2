@@ -1,0 +1,177 @@
+File: README
+Author: Amanda Rawls
+Date: 2/26/2017
+Project: A simple genetic algorithm
+Class: CS4300
+Professor: Dr. Mark Hauschild
+
+This project implements a simple genetic algorithm that only uses crossover and
+mutation to solve the onemax problem. 
+Extra credit: also implement the trap five problem.
+
+COMPILATION NOTE
+----------------
+The files of this program are in a package called p2. If compiling on the command
+line, enter the directory p2 and run "javac *". Exit the directory to run the 
+program by running "java p2.SimpleGenetic"
+
+This program has been tested on on Hoare.
+Version control has been implemented with Git. 
+
+FILE CONTENTS
+-------------
+ SimpleGenetic (Class)
+	main(String[]) : void
+		boolean runOnce
+			if true, calls runProgram once.
+      if false, calls runProgram 100 times at the desired setting and returns
+      some data.
+	runProgram : Generation
+		gets user inputs, initializes instances GeneticAlgorithm and Generation, 
+		runs the tournament for each generation. returns the last Generation
+	buildnextGen(GeneticAlgorithm algorithm, Generation generation) : Generation
+    runs a tournament for a given generation with the given algorithm, until the
+    new generation is filled to n-2. adds the best parents and returns the
+    descendants, effectively replacing parents' population with children's
+    population
+
+		
+GeneticAlgorithm (interface)
+	 crossover(Individual one, Individual two) : List<Individual>
+ 		given two Individuals, create a new DNA string and return two Individuals
+ 	 evaluateFitness(Individual person) : int
+ 	 	given an Individual, evaluate its fitness and return its fitness value
+
+ 	 	
+OneMax (class implements GeneticAlgorithm)
+	 crossover(Individual one, Individual two) : List<Individual>
+	 	given two Individuals, execute uniform crossover
+	 	create two new DNA strings, and return two Individuals
+	 evaluateFitness(Individual person) : int
+		evaluates person's fitness and returns its fitness value
+		according to the onemax fitness specification
+	
+	
+TrapFive (class implements GeneticAlgorithm)
+	 crossover(Individual one, Individual two) : List<Individual>
+	 	given two Individuals, execute two point crossover
+	 	return two Individuals with crossoverDNA variations
+	 evaluateFitness(Individual person) : int
+		evaluates person's fitness and returns its fitness value
+		according to the trap5 fitness specification
+	
+		
+ Individual (Class)
+ 	Individual(<Integer> s) 
+ 		public constructor, randomly initialize dna of length s
+ 	Individual(List<Integer> dna)
+ 		private constructor with provided dna
+ 	createChild(List<Integer> crossoverDNA, GeneticAlgorithm algorithm) : Individual
+ 		calls the private constructor and returns a new Individual 
+ 	mutate() : void
+ 		mutates the DNA of the Individual
+ 	setFitness(GeneticAlgorithm algorithm) : int
+ 		calls the evaluateFitness function from the algorithm
+ 		and sets the current individual's fitness and also returns it
+ 	getFitness() : int
+ 	getDNAlen() : int
+ 	getDNA() : List<Integer>
+
+
+ Generation (Class) 
+	Generation(int n, int s) 
+		public generation zero constructor
+ 		takes in population size n and size of string s initializes the first 
+		population of Individuals 
+	Generation(Generation ancestor) 
+		private empty constructor, only to be called from newGeneration() inherits 
+		history from parent, sets most recent entry to ancestor.average 
+	descendants() : Generation
+ 		creates an empty Generation and returns the Generation 
+	addIndividual(Individual person) 
+		add the Individual to the population and updates population size
+ 	calculateStatistics() 
+		once the population has been established, call this
+ 		function to calculate statistics 
+	displayStatistics() displays the average,
+ 		best, and worst fitness found in the population 
+	averageImproved() : boolean
+ 		returns true if the average fitness has improved over the last three
+ 		generations 
+	getRandParent() : Individual 
+		returns a random Individual of the population 
+	tournament() : Individual 
+		randomly picks two parents from the population and returns the best of 
+		them according to their fitness.
+ 	getBestParents() : List<Individual> 
+		returns the two Individuals with the best fitness value in a List 
+	getAverage() : double
+ 	getPopSize() : int 
+	getMax() : int 
+	getGen() : double 
+		only used for runOnce = false in main()
+		
+ PROGRAM PERFORMANCE
+--------------------
+ONEMAX
+At first my onemax function wasn't achieving 100% success in finding the optimal
+solution until the population exceeded 10240.  In adding the extra credit
+TrapFive I realized I was not mutating children who were copies of their
+parents. Once I correctly implemented the mutation, the performance of the
+algorithm improved tremendously, achieving 100% success at a population of 320.
+
+onemaxData.pdf displays a graph showing the success rate at finding the optimal
+solution as a function of the population size.  Each data point was derived from
+100 runs of the genetic algorithm at the specified population size and a binary
+string size of 20.
+
+Not shown in the graph is the average fitness over the population when the
+genetic algorithm terminated. It remained around 14-16%. The number of
+generations before the genetic algorithm terminated also remained relatively
+low, below 13.
+
+Data retrieved for the performance analysis:
+
+Out of 100 runs, population size of 10, binary string size of 20, optimum
+solution success rate: 6% The average number of generations it took before
+completing the search was 12.13.  The average of last generations' averages was
+14.877000000000002.
+
+Out of 100 runs, population size of 20, binary string size of 20, optimum
+solution success rate: 28% The average number of generations it took before
+completing the search was 12.78.  The average of last generations' averages was
+15.683499999999997.
+
+Out of 100 runs, population size of 40, binary string size of 20, optimum
+solution success rate: 56% The average number of generations it took before
+completing the search was 12.96.  The average of last generations' averages was
+15.778499999999994.
+
+Out of 100 runs, population size of 80, binary string size of 20, optimum
+solution success rate: 85% The average number of generations it took before
+completing the search was 11.41.  The average of last generations' averages was
+15.392250000000006.
+
+Out of 100 runs, population size of 160, binary string size of 20, optimum
+solution success rate: 96% The average number of generations it took before
+completing the search was 9.71.  The average of last generations' averages was
+15.112875000000013.
+
+Out of 100 runs, population size of 320, binary string size of 20, optimum
+solution success rate: 100% The average number of generations it took before
+completing the search was 8.71.  The average of last generations' averages was
+14.869281249999997.
+
+TRAPFIVE
+I am not certain I have implemented the fitness function correctly. This
+performs much more poorly than the onemax problem.
+
+Out of 100 runs, population size of 20, binary string size of 20, optimum
+solution success rate: 0% The highest fitness found was 17.  The average number
+of generations it took before completing the search was 11.78.  The average of
+last generations' averages was 10.463999999999997.
+
+Out of 100 runs, population size of 50, binary string size of 20, optimum
+solution success rate: 0% The highest fitness found was 18.  The average number
+of generations it took before completing the search was 13.78.  The average of
+last generations' averages was 10.582800000000002.
